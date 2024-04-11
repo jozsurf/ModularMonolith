@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModularMonolithApi", "ModularMonolithApi\ModularMonolithApi.csproj", "{0C551691-37E5-4BE2-830C-62E651580193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserModule", "UserModule\UserModule.csproj", "{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C551691-37E5-4BE2-830C-62E651580193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C551691-37E5-4BE2-830C-62E651580193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C551691-37E5-4BE2-830C-62E651580193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C551691-37E5-4BE2-830C-62E651580193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
