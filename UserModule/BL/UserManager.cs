@@ -6,7 +6,7 @@ internal interface IUserManager
 {
     UserDto? GetUser(Guid id);
 
-    void AddUser(UserDto user);
+    UserDto AddUser(string firstName, string surname);
 }
 
 internal record UserDto(Guid Id, string FirstName, string Surname);
@@ -20,8 +20,13 @@ internal class UserManager(IUserRepository repository) : IUserManager
         return result != null ? new UserDto(result.Id, result.FirstName, result.Surname) : null;
     }
 
-    public void AddUser(UserDto user)
+    public UserDto AddUser(string firstName, string surname)
     {
-        repository.Add(new User(user.Id, user.FirstName, user.Surname));
+        var userId = Guid.NewGuid();
+        repository.Add(new User(userId, firstName, surname));
+
+        var user = repository.GetById(userId)!;
+
+        return new UserDto(user.Id, user.FirstName, user.Surname);
     }
 }

@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ModularMonolithApi.Models;
 using UserModule;
 using UserModule.Mediator;
 
@@ -28,14 +29,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/api/user/{userId}", async (Guid userId, [FromServices]IMediator  mediator) =>
-{
-    
-    var result = await mediator.Send(new GetUserRequest { UserId = userId });
+app.MapGet("/api/user/{userId}",
+        async (Guid userId, [FromServices] IMediator mediator) =>
+        {
+            var result = await mediator.Send(new GetUserRequest { UserId = userId });
 
-    return result;
-})
+            if (result != null)
+            {
+                return Results.Ok(result);
+            }
+
+            return Results.NotFound(result);
+        })
     .WithName("GetUser")
+    .WithOpenApi();
+
+app.MapPost("/api/user",
+        async (CreateUserModel model, [FromServices] IMediator mediator) =>
+        await mediator.Send(new AddUserRequest { FirstName = model.FirstName, Surname = model.Surname }))
+    .WithName("AddUser")
     .WithOpenApi();
 
 app.Run();
