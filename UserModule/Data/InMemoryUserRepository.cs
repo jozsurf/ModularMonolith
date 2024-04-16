@@ -4,6 +4,7 @@ namespace UserModule.Data;
 
 internal interface IUserRepository
 {
+    List<User> GetUsers();
     User? GetById(Guid id);
     void Add(User user);
     void Update(User user);
@@ -14,8 +15,30 @@ internal record User(Guid Id, string FirstName, string Surname);
 
 internal class InMemoryUserRepository : IUserRepository
 {
-    private readonly ConcurrentDictionary<Guid, User> _users = new();
-    
+    private readonly ConcurrentDictionary<Guid, User> _users;
+
+    public InMemoryUserRepository()
+    {
+        _users = new();
+
+        List<User> initialUsers =
+        [
+            new User(Guid.NewGuid(), "Dino", "Baggio"), 
+            new User(Guid.NewGuid(), "Youri", "Djorkaeff"),
+            new User(Guid.NewGuid(), "Martin", "Dahlin")
+        ];
+
+        foreach (var user in initialUsers)
+        {
+            _users.TryAdd(user.Id, user);
+        }
+    }
+
+    public List<User> GetUsers()
+    {
+        return _users.Values.ToList();
+    }
+
     public User? GetById(Guid id)
     {
         return _users.GetValueOrDefault(id);

@@ -1,6 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithApi.Models;
+using ProductModule;
+using ProductModule.Mediator;
 using UserModule;
 using UserModule.Mediator;
 
@@ -13,10 +15,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(DependencyInjectionHelper).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetUserRequest).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(GetProductsRequest).Assembly);
 });
 
 builder.Services.RegisterUserModuleDependencies();
+builder.Services.RegisterProductModuleDependencies();
 
 var app = builder.Build();
 
@@ -28,6 +32,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapGet("/api/user", async (IMediator mediator) =>
+{
+    var result = await mediator.Send(new GetUsersRequest());
+    return Results.Ok(result);
+}).WithName("GetUsers").WithOpenApi();
 
 app.MapGet("/api/user/{userId}",
         async (Guid userId, [FromServices] IMediator mediator) =>
@@ -49,5 +59,11 @@ app.MapPost("/api/user",
         await mediator.Send(new AddUserRequest { FirstName = model.FirstName, Surname = model.Surname }))
     .WithName("AddUser")
     .WithOpenApi();
+
+app.MapGet("/api/product", async (IMediator mediator) =>
+{
+    var result = await mediator.Send(new GetProductsRequest());
+    return Results.Ok(result);
+}).WithName("GetProducts").WithOpenApi();
 
 app.Run();

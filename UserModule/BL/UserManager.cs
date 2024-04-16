@@ -4,6 +4,7 @@ namespace UserModule.BL;
 
 internal interface IUserManager
 {
+    List<UserDto> GetUsers();
     UserDto? GetUser(Guid id);
 
     UserDto AddUser(string firstName, string surname);
@@ -13,6 +14,11 @@ internal record UserDto(Guid Id, string FirstName, string Surname);
 
 internal class UserManager(IUserRepository repository) : IUserManager
 {
+    public List<UserDto> GetUsers()
+    {
+        return repository.GetUsers().Select(u => new UserDto(u.Id, u.FirstName, u.Surname)).ToList();
+    }
+
     public UserDto? GetUser(Guid id)
     {
         var result = repository.GetById(id);
