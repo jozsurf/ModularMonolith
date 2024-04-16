@@ -37,7 +37,10 @@ app.MapGet("/api/user", async (IMediator mediator) =>
 {
     var result = await mediator.Send(new GetUsersRequest());
     return Results.Ok(result);
-}).WithName("GetUsers").WithOpenApi();
+})
+    .WithName("GetUsers")
+    .WithTags("User")
+    .WithOpenApi();
 
 app.MapGet("/api/user/{userId}",
         async (Guid userId, [FromServices] IMediator mediator) =>
@@ -52,18 +55,23 @@ app.MapGet("/api/user/{userId}",
             return Results.NotFound(result);
         })
     .WithName("GetUser")
+    .WithTags("User")
     .WithOpenApi();
 
 app.MapPost("/api/user",
         async (CreateUserModel model, [FromServices] IMediator mediator) =>
         await mediator.Send(new AddUserRequest { FirstName = model.FirstName, Surname = model.Surname }))
     .WithName("AddUser")
+    .WithTags("User")
     .WithOpenApi();
 
 app.MapGet("/api/product", async (IMediator mediator) =>
 {
     var result = await mediator.Send(new GetProductsRequest());
     return Results.Ok(result);
-}).WithName("GetProducts").WithOpenApi();
+})
+    .WithName("GetProducts")
+    .WithTags("Product")
+    .WithOpenApi();
 
 app.Run();
