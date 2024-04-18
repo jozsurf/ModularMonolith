@@ -1,9 +1,8 @@
+using Contracts.Users;
 using MediatR;
 using UserModule.BL;
 
 namespace UserModule.Mediator;
-
-public class GetUsersRequest : IRequest<List<User>>{}
 
 internal class GetUsersHandler : IRequestHandler<GetUsersRequest, List<User>>
 {

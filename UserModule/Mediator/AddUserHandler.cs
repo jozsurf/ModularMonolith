@@ -1,13 +1,8 @@
+using Contracts.Users;
 using MediatR;
 using UserModule.BL;
 
 namespace UserModule.Mediator;
-
-public class AddUserRequest : IRequest<User>
-{
-    public required string FirstName { get; set; }
-    public required string Surname { get; set; }
-}
 
 internal class AddUserHandler(IUserManager userManager) : IRequestHandler<AddUserRequest, User>
 {

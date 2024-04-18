@@ -6,6 +6,8 @@ internal interface IProductManager
 {
     IList<ProductDto> GetProducts();
 
+    ProductDto? GetProduct(Guid id);
+
     void AddProduct(string name, int quantity);
 
     bool OrderProduct(Guid id, int quantity);
@@ -18,6 +20,13 @@ internal class ProductManager(IProductRepository repository) : IProductManager
     public IList<ProductDto> GetProducts()
     {
         return repository.GetAll().Select(p => new ProductDto(p.Id, p.Name, p.Quantity)).ToList();
+    }
+
+    public ProductDto? GetProduct(Guid id)
+    {
+        var result = repository.GetById(id);
+
+        return result != null ? new ProductDto(result.Id, result.Name, result.Quantity) : null;
     }
 
     public void AddProduct(string name, int quantity)

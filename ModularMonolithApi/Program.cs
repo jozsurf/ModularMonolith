@@ -1,10 +1,10 @@
+using Contracts.Products;
+using Contracts.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithApi.Models;
 using ProductModule;
-using ProductModule.Mediator;
 using UserModule;
-using UserModule.Mediator;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,14 +1,8 @@
+using Contracts.Users;
 using MediatR;
 using UserModule.BL;
 
 namespace UserModule.Mediator;
-
-public record User(Guid Id, string FirstName, string Surname);
-
-public class GetUserRequest : IRequest<User?>
-{
-    public Guid UserId { get; set; }
-}
 
 internal class GetUserHandler(IUserManager userManager) : IRequestHandler<GetUserRequest, User?>
 {

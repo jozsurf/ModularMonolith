@@ -1,14 +1,8 @@
+using Contracts.Products;
 using MediatR;
 using ProductModule.BL;
 
 namespace ProductModule.Mediator;
-
-public record Product(Guid Id, string Name, int Quantity);
-
-public class GetProductsRequest : IRequest<List<Product>>
-{
-    
-}
 
 internal class GetProductsHandler(IProductManager productManager) : IRequestHandler<GetProductsRequest, List<Product>>
 {

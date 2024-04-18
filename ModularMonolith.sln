@@ -8,6 +8,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{9CE4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductModule", "ProductModule\ProductModule.csproj", "{CC987F83-30F9-46B9-9FEC-2EF82588A1BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderModule", "OrderModule\OrderModule.csproj", "{B7A38628-F0A8-4C21-9B26-312FB426673D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{7785DB9A-6470-4213-90DE-555111258816}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +30,18 @@ Global
 		{CC987F83-30F9-46B9-9FEC-2EF82588A1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC987F83-30F9-46B9-9FEC-2EF82588A1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC987F83-30F9-46B9-9FEC-2EF82588A1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A38628-F0A8-4C21-9B26-312FB426673D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A38628-F0A8-4C21-9B26-312FB426673D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A38628-F0A8-4C21-9B26-312FB426673D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A38628-F0A8-4C21-9B26-312FB426673D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7785DB9A-6470-4213-90DE-555111258816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7785DB9A-6470-4213-90DE-555111258816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7785DB9A-6470-4213-90DE-555111258816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7785DB9A-6470-4213-90DE-555111258816}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2F58CEE8-0A54-406A-AC77-13EB3D7EEA23} = {9CE44ECE-9ABF-4BCB-8251-5C7DA7679600}
 		{CC987F83-30F9-46B9-9FEC-2EF82588A1BC} = {9CE44ECE-9ABF-4BCB-8251-5C7DA7679600}
+		{B7A38628-F0A8-4C21-9B26-312FB426673D} = {9CE44ECE-9ABF-4BCB-8251-5C7DA7679600}
 	EndGlobalSection
 EndGlobal
