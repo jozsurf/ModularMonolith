@@ -7,13 +7,15 @@ namespace OrderModule.BL;
 
 internal interface IOrderManager
 {
-    Task MakeOrder(Guid userId, Guid productId);
+    Task<OrderDto> MakeOrder(Guid userId, Guid productId);
 }
+
+internal record OrderDto(Guid Id, Guid UserId, Guid ProductId, DateTime OrderedOn);
 
 internal class OrderManager : IOrderManager
 {
-    private IMediator _mediator;
-    private IOrderRepository _repository;
+    private readonly IMediator _mediator;
+    private readonly IOrderRepository _repository;
 
     public OrderManager(IMediator mediator, IOrderRepository repository)
     {
@@ -21,12 +23,20 @@ internal class OrderManager : IOrderManager
         _repository = repository;
     }
 
-    public async Task MakeOrder(Guid userId, Guid productId)
+    public async Task<OrderDto> MakeOrder(Guid userId, Guid productId)
     {
         var userTask = _mediator.Send(new GetUserRequest { UserId = userId });
         var product = await _mediator.Send(new GetProductRequest { ProductId = productId });
         var user = await userTask;
-        
-        throw new NotImplementedException();
+
+        if (product == null || user == null)
+            throw new ApplicationException("Product or User cannot be located");
+
+        var orderId = Guid.NewGuid();
+        _repository.Add(new Order(orderId, user.Id, product.Id, DateTime.UtcNow));
+
+        var order = _repository.GetById(orderId)!;
+
+        return new OrderDto(order.Id, order.UserId, order.ProductId, order.OrderedOn);
     }
 }
