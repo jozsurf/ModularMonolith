@@ -56,7 +56,7 @@ internal class InMemoryProductRepository : IProductRepository
     {
         var existingProduct = GetById(product.Id);
 
-        if (existingProduct != null && _products.TryUpdate(product.Id, product, existingProduct))
+        if (existingProduct == null || !_products.TryUpdate(product.Id, product, existingProduct))
             throw new DataException();
     }
 

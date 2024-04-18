@@ -32,11 +32,14 @@ internal class OrderManager : IOrderManager
         if (product == null || user == null)
             throw new ApplicationException("Product or User cannot be located");
 
+        var productOrderResult = await _mediator.Send(new OrderProductRequest { ProductId = productId, Quantity = 1 });
+        if (!productOrderResult.Success)
+            throw new ApplicationException(productOrderResult.Message);
+            
         var orderId = Guid.NewGuid();
         _repository.Add(new Order(orderId, user.Id, product.Id, DateTime.UtcNow));
 
         var order = _repository.GetById(orderId)!;
-
         return new OrderDto(order.Id, order.UserId, order.ProductId, order.OrderedOn);
     }
 }

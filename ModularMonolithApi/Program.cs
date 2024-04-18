@@ -1,8 +1,10 @@
+using Contracts.Orders;
 using Contracts.Products;
 using Contracts.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ModularMonolithApi.Models;
+using OrderModule;
 using ProductModule;
 using UserModule;
 
@@ -15,12 +17,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetUserRequest).Assembly);
-    cfg.RegisterServicesFromAssembly(typeof(GetProductsRequest).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(UserModule.DependencyInjectionHelper).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(ProductModule.DependencyInjectionHelper).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(OrderModule.DependencyInjectionHelper).Assembly);
 });
 
 builder.Services.RegisterUserModuleDependencies();
 builder.Services.RegisterProductModuleDependencies();
+builder.Services.RegisterOrderModuleDependencies();
 
 var app = builder.Build();
 
@@ -72,6 +76,13 @@ app.MapGet("/api/product", async (IMediator mediator) =>
 })
     .WithName("GetProducts")
     .WithTags("Product")
+    .WithOpenApi();
+
+app.MapPost("/api/order",
+        async (AddOrderModel model, [FromServices] IMediator mediator) =>
+        await mediator.Send(new AddOrderRequest { UserId = model.UserId, ProductId = model.ProductId }))
+    .WithName("AddOrder")
+    .WithTags("Order")
     .WithOpenApi();
 
 app.Run();
