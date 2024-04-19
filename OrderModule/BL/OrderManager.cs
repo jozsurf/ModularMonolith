@@ -8,6 +8,7 @@ namespace OrderModule.BL;
 internal interface IOrderManager
 {
     Task<OrderDto> MakeOrder(Guid userId, Guid productId);
+    OrderDto? GetOrderById(Guid id);
 }
 
 internal record OrderDto(Guid Id, Guid UserId, Guid ProductId, DateTime OrderedOn);
@@ -41,5 +42,12 @@ internal class OrderManager : IOrderManager
 
         var order = _repository.GetById(orderId)!;
         return new OrderDto(order.Id, order.UserId, order.ProductId, order.OrderedOn);
+    }
+
+    public OrderDto? GetOrderById(Guid id)
+    {
+        var order = _repository.GetById(id);
+
+        return order != null ? new OrderDto(order.Id, order.UserId, order.ProductId, order.OrderedOn) : null;
     }
 }
