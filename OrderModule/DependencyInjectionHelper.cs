@@ -1,7 +1,11 @@
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 using OrderModule.BL;
 using OrderModule.Data;
 
+// for unit tests
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: InternalsVisibleTo("OrderModuleTests")]
 namespace OrderModule;
 
 public static class DependencyInjectionHelper
