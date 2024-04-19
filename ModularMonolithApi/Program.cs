@@ -78,6 +78,21 @@ app.MapGet("/api/product", async (IMediator mediator) =>
     .WithTags("Product")
     .WithOpenApi();
 
+app.MapGet("/api/order/{orderId}", async (Guid orderId, [FromServices] IMediator mediator) =>
+    {
+        var result = await mediator.Send(new GetOrderRequest { Id = orderId });
+
+        if (result != null)
+        {
+            return Results.Ok(result);
+        }
+
+        return Results.NotFound(result);
+    })
+    .WithName("GetOrder")
+    .WithTags("Order")
+    .WithOpenApi();
+
 app.MapPost("/api/order",
         async (AddOrderModel model, [FromServices] IMediator mediator) =>
         await mediator.Send(new AddOrderRequest { UserId = model.UserId, ProductId = model.ProductId }))
