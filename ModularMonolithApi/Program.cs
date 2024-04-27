@@ -1,19 +1,47 @@
+using System.Security.Claims;
 using Contracts.Orders;
 using Contracts.Products;
 using Contracts.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using ModularMonolithApi.Models;
 using OrderModule;
 using ProductModule;
 using UserModule;
+
+const string authenticationSchema = "bearer"; 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+            },
+            []
+        }
+    });
+});
 
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
@@ -26,6 +54,9 @@ builder.Services.RegisterUserModuleDependencies();
 builder.Services.RegisterProductModuleDependencies();
 builder.Services.RegisterOrderModuleDependencies();
 
+builder.Services.AddAuthentication().AddBearerToken(authenticationSchema);
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +68,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapGet("/api/user", async (IMediator mediator) =>
 {
     var result = await mediator.Send(new GetUsersRequest());
@@ -44,6 +78,7 @@ app.MapGet("/api/user", async (IMediator mediator) =>
 })
     .WithName("GetUsers")
     .WithTags("User")
+    .RequireAuthorization()
     .WithOpenApi();
 
 app.MapGet("/api/user/{userId}",
@@ -60,6 +95,7 @@ app.MapGet("/api/user/{userId}",
         })
     .WithName("GetUser")
     .WithTags("User")
+    .RequireAuthorization()
     .WithOpenApi();
 
 app.MapPost("/api/user",
@@ -67,6 +103,7 @@ app.MapPost("/api/user",
         await mediator.Send(new AddUserRequest { FirstName = model.FirstName, Surname = model.Surname }))
     .WithName("AddUser")
     .WithTags("User")
+    .RequireAuthorization()
     .WithOpenApi();
 
 app.MapGet("/api/product", async (IMediator mediator) =>
@@ -76,6 +113,7 @@ app.MapGet("/api/product", async (IMediator mediator) =>
 })
     .WithName("GetProducts")
     .WithTags("Product")
+    .RequireAuthorization()
     .WithOpenApi();
 
 app.MapGet("/api/order/{orderId}", async (Guid orderId, [FromServices] IMediator mediator) =>
@@ -91,6 +129,7 @@ app.MapGet("/api/order/{orderId}", async (Guid orderId, [FromServices] IMediator
     })
     .WithName("GetOrder")
     .WithTags("Order")
+    .RequireAuthorization()
     .WithOpenApi();
 
 app.MapPost("/api/order",
@@ -98,6 +137,21 @@ app.MapPost("/api/order",
         await mediator.Send(new AddOrderRequest { UserId = model.UserId, ProductId = model.ProductId }))
     .WithName("AddOrder")
     .WithTags("Order")
+    .RequireAuthorization()
+    .WithOpenApi();
+
+app.MapPost("/api/auth", () =>
+    {
+        return Results.SignIn(new ClaimsPrincipal(
+                new ClaimsIdentity(new[]
+                {
+                    new Claim("username", "jozsurf")
+                }, authenticationSchema)),
+            authenticationScheme: authenticationSchema);
+    })
+    .WithName("Authenticate")
+    .WithTags("Auth")
+    .AllowAnonymous()
     .WithOpenApi();
 
 app.Run();
