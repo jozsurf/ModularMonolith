@@ -12,7 +12,10 @@ using UserModule;
 using AuthorisationModule;
 using Contracts.Authorisation;
 
-const string authenticationSchema = "bearer"; 
+const string authenticationSchema = "bearer";
+
+const string adminPolicyName = "admin";
+const string supervisorPolicyName = "superv";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +62,11 @@ builder.Services.RegisterOrderModuleDependencies();
 builder.Services.RegisterAuthorisationModuleDependencies();
 
 builder.Services.AddAuthentication().AddBearerToken(authenticationSchema);
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy(adminPolicyName, p => p.RequireClaim("role", "admin"));
+    opt.AddPolicy(supervisorPolicyName, p => p.RequireClaim("role", "admin", "super"));
+});
 
 var app = builder.Build();
 
@@ -82,7 +89,7 @@ app.MapGet("/api/user", async (IMediator mediator) =>
 })
     .WithName("GetUsers")
     .WithTags("User")
-    .RequireAuthorization()
+    .RequireAuthorization(supervisorPolicyName)
     .WithOpenApi();
 
 app.MapGet("/api/user/{userId}",
@@ -99,7 +106,7 @@ app.MapGet("/api/user/{userId}",
         })
     .WithName("GetUser")
     .WithTags("User")
-    .RequireAuthorization()
+    .RequireAuthorization(supervisorPolicyName)
     .WithOpenApi();
 
 app.MapPost("/api/user",
@@ -107,7 +114,7 @@ app.MapPost("/api/user",
         await mediator.Send(new AddUserRequest { FirstName = model.FirstName, Surname = model.Surname }))
     .WithName("AddUser")
     .WithTags("User")
-    .RequireAuthorization()
+    .RequireAuthorization(adminPolicyName)
     .WithOpenApi();
 
 app.MapGet("/api/product", async (IMediator mediator) =>
@@ -117,7 +124,7 @@ app.MapGet("/api/product", async (IMediator mediator) =>
 })
     .WithName("GetProducts")
     .WithTags("Product")
-    .RequireAuthorization()
+    .RequireAuthorization(supervisorPolicyName)
     .WithOpenApi();
 
 app.MapGet("/api/order/{orderId}", async (Guid orderId, [FromServices] IMediator mediator) =>
@@ -133,7 +140,7 @@ app.MapGet("/api/order/{orderId}", async (Guid orderId, [FromServices] IMediator
     })
     .WithName("GetOrder")
     .WithTags("Order")
-    .RequireAuthorization()
+    .RequireAuthorization(supervisorPolicyName)
     .WithOpenApi();
 
 app.MapPost("/api/order",
@@ -141,7 +148,7 @@ app.MapPost("/api/order",
         await mediator.Send(new AddOrderRequest { UserId = model.UserId, ProductId = model.ProductId }))
     .WithName("AddOrder")
     .WithTags("Order")
-    .RequireAuthorization()
+    .RequireAuthorization(adminPolicyName)
     .WithOpenApi();
 
 app.MapPost("/api/auth", async (AuthorisationModel model, IMediator mediator) =>
