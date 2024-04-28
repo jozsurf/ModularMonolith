@@ -9,6 +9,8 @@ using ModularMonolithApi.Models;
 using OrderModule;
 using ProductModule;
 using UserModule;
+using AuthorisationModule;
+using Contracts.Authorisation;
 
 const string authenticationSchema = "bearer"; 
 
@@ -48,11 +50,13 @@ builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(UserModule.DependencyInjectionHelper).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(ProductModule.DependencyInjectionHelper).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(OrderModule.DependencyInjectionHelper).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(AuthorisationModule.DependencyInjectionHelper).Assembly);
 });
 
 builder.Services.RegisterUserModuleDependencies();
 builder.Services.RegisterProductModuleDependencies();
 builder.Services.RegisterOrderModuleDependencies();
+builder.Services.RegisterAuthorisationModuleDependencies();
 
 builder.Services.AddAuthentication().AddBearerToken(authenticationSchema);
 builder.Services.AddAuthorization();
@@ -140,12 +144,21 @@ app.MapPost("/api/order",
     .RequireAuthorization()
     .WithOpenApi();
 
-app.MapPost("/api/auth", () =>
+app.MapPost("/api/auth", async (AuthorisationModel model, IMediator mediator) =>
     {
+        var authorisedUser = await mediator.Send(new AuthorisationRequest
+            { Username = model.Username, Password = model.Password });
+
+        if (authorisedUser == null)
+        {
+            return Results.Unauthorized();
+        }
+
         return Results.SignIn(new ClaimsPrincipal(
                 new ClaimsIdentity(new[]
                 {
-                    new Claim("username", "jozsurf")
+                    new Claim("username", authorisedUser.Username),
+                    new Claim("role", authorisedUser.Roles.FirstOrDefault() ?? string.Empty)
                 }, authenticationSchema)),
             authenticationScheme: authenticationSchema);
     })
